@@ -18,6 +18,8 @@ C’est une base de projet évolutive qui servira de fondation pour des fonction
 
 En Version V1.0, je me suis beaucoup inspiré de ce projet : https://www.youtube.com/watch?v=TO8bdYqeX40
 
+Voici le tuto vidéo de l'utilisation de mon app : https://www.youtube.com/watch?v=QQOp5siDpJo
+
 ⚡️ Fonctionnalités principales (V 1.0 - Août 2025)
 
 ➕ Ajouter une action à sa liste (ticker, nom, secteur).

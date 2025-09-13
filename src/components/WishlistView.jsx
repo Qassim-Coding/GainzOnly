@@ -13,6 +13,7 @@ export default function WishlistView({ watchlist = [], setWatchlist, openStockWi
   const [wlName, setWlName] = useState("");
   const [wlSector, setWlSector] = useState("");
   const [wlDesired, setWlDesired] = useState("");
+  const [wlExchange, setWlExchange] = useState("NASDAQ");
 
   const symbols = useMemo(
     () => [...new Set((watchlist || []).map((p) => p?.symbol).filter(Boolean))],
@@ -63,12 +64,14 @@ export default function WishlistView({ watchlist = [], setWatchlist, openStockWi
       name: wlName.trim(),
       sector: wlSector.trim(),
       desiredPrice: desired,
+      exchange: wlExchange,
     };
     setWatchlist([...(watchlist || []), next]);
     setWlSymbol("");
     setWlName("");
     setWlSector("");
     setWlDesired("");
+    setWlExchange("NASDAQ");
   }
 
   function handleRemove(sym) {
@@ -90,21 +93,32 @@ export default function WishlistView({ watchlist = [], setWatchlist, openStockWi
       </div>
 
       {/* Formulaire d'ajout */}
-      <div className="px-4 py-3 bg-neutral-950 border-t border-neutral-800 grid grid-cols-1 md:grid-cols-5 gap-2">
+      <div className="px-4 py-3 bg-neutral-950 border-t border-neutral-800 grid grid-cols-1 md:grid-cols-6 gap-2">
+        <select
+          value={wlExchange}
+          onChange={(e) => setWlExchange(e.target.value)}
+          className="bg-neutral-800 text-white rounded px-2 py-1 w-full md:w-auto"
+        >
+          <option value="NASDAQ">NASDAQ</option>
+          <option value="NYSE">NYSE</option>
+        </select>
         <Input
           value={wlSymbol}
           onChange={(e) => setWlSymbol(e.target.value.toUpperCase())}
           placeholder="Ticker (ex: AAPL)"
+          className="w-full md:w-auto"
         />
         <Input
           value={wlName}
           onChange={(e) => setWlName(e.target.value)}
           placeholder="Nom (optionnel)"
+          className="w-full md:w-auto"
         />
         <Input
           value={wlSector}
           onChange={(e) => setWlSector(e.target.value)}
           placeholder="Secteur (optionnel)"
+          className="w-full md:w-auto"
         />
         <Input
           value={wlDesired}
@@ -112,6 +126,7 @@ export default function WishlistView({ watchlist = [], setWatchlist, openStockWi
           placeholder="Prix souhaité (optionnel)"
           type="number"
           step="0.01"
+          className="w-full md:w-auto"
         />
         <Button classes="bg-teal-600 hover:bg-teal-700" onClick={handleAdd}>
           Ajouter
@@ -125,11 +140,11 @@ export default function WishlistView({ watchlist = [], setWatchlist, openStockWi
             <tr>
               <th className="text-left px-3 py-2">Ticker</th>
               <th className="text-left px-3 py-2">Nom</th>
-              <th className="text-left px-3 py-2">Secteur</th>
+              <th className="text-left px-3 py-2 hidden sm:table-cell">Secteur</th>
               <th className="text-right px-3 py-2">Prix souhaité</th>
               <th className="text-right px-3 py-2">Cours</th>
               <th className="text-right px-3 py-2">Écart</th>
-              <th className="text-center px-3 py-2">État</th>
+              <th className="text-center px-3 py-2 hidden sm:table-cell">État</th>
               <th className="text-center px-3 py-2">Actions</th>
             </tr>
           </thead>
@@ -157,7 +172,7 @@ export default function WishlistView({ watchlist = [], setWatchlist, openStockWi
                 <tr key={w.symbol} className="border-t border-neutral-800 hover:bg-neutral-900/40">
                   <td className="px-3 py-2 font-medium">{w.symbol}</td>
                   <td className="px-3 py-2">{w.name || "—"}</td>
-                  <td className="px-3 py-2">{w.sector || "—"}</td>
+                  <td className="px-3 py-2 hidden sm:table-cell">{w.sector || "—"}</td>
                   <td className="px-3 py-2 text-right">
                     <input
                       className="w-28 bg-neutral-800 text-white rounded px-2 py-1 text-right"
@@ -172,19 +187,19 @@ export default function WishlistView({ watchlist = [], setWatchlist, openStockWi
                   <td className={`px-3 py-2 text-right ${diffCls}`}>
                     {diffPct != null ? `${diffPct.toFixed(2)} %` : "—"}
                   </td>
-                  <td className="px-3 py-2 text-center">
+                  <td className="px-3 py-2 text-center hidden sm:table-cell">
                     {status === "OK" ? "✅" : status === "Erreur" ? "❌" : "…"}
                   </td>
-                  <td className="px-3 py-2 text-center space-x-2">
+                  <td className="px-3 py-2 text-center flex justify-center items-center gap-2">
                     <button
-                      onClick={() => openStockWidget && openStockWidget(w.symbol)}
-                      className="px-2 py-1 rounded bg-neutral-800 hover:bg-neutral-700"
+                      onClick={() => openStockWidget && openStockWidget({ symbol: w.symbol, exchange: w.exchange })}
+                      className="px-2 py-1 text-xs rounded bg-neutral-800 hover:bg-neutral-700"
                     >
                       Graphique
                     </button>
                     <button
                       onClick={() => handleRemove(w.symbol)}
-                      className="px-2 py-1 rounded bg-neutral-800 hover:bg-neutral-700"
+                      className="px-2 py-1 text-xs rounded bg-neutral-800 hover:bg-neutral-700"
                     >
                       Supprimer
                     </button>
